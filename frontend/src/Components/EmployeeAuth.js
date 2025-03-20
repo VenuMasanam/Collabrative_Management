@@ -65,7 +65,7 @@ const EmployeeAuth = () => {
             if (data.message === 'User registered successfully') {
                 localStorage.setItem('userRole', 'employee');
                 localStorage.setItem('loggedInEmail', email); // Update the key to be consistent
-                navigate('/employee-interface');
+                navigate('/employee-auth');
                 window.location.reload();
             } else {
                 setErrorMessage(data.message);

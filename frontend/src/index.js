@@ -1,12 +1,12 @@
-// src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // Import createRoot from react-dom/client
-import { BrowserRouter as Router } from 'react-router-dom'; // Import Router
+import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter
 import App from './App'; // Import your App component
 
 const root = ReactDOM.createRoot(document.getElementById('root'));  // Create root using createRoot
+
 root.render(
-  <Router>  {/* Make sure Router wraps the entire application */}
+  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>  
     <App />
-  </Router>
+  </BrowserRouter>
 );

@@ -17,7 +17,7 @@ body {
 }
 
 .main-content {
-    margin-left: 280px; /* Sidebar width */
+    margin-left: 0px; /* Sidebar width */
     padding: 40px;
     flex: 1;
     background-color: #f9f9f9;

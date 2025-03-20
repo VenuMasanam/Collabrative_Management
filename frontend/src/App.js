@@ -10,6 +10,7 @@ import EmployeeAuth from './Components/EmployeeAuth';
 import TeamLeadInterface from './Components/TeamLeadInterface';
 
 import EmployeeDashboard from './Components/EmployeeDashboard';
+import EmployeeInterface from './Components/EmployeeInterface';
 import CreateTask from './Components/CreateTask';
 
 import FileModules from './Components/FileModules';
@@ -49,7 +50,7 @@ const App = () => {
                 <Route path="/team-lead-auth" element={<TeamLeadAuth setIsAuthenticated={setIsAuthenticated} />} />
                 <Route path="/employee-auth" element={<EmployeeAuth setIsAuthenticated={setIsAuthenticated} />} />
                 <Route path="/team-lead-interface" element={<TeamLeadInterface />} />
-                {/* <Route path="/employee-interface" element={<EmployeeInterface />} />  */}
+                <Route path="/employee-interface" element={<EmployeeInterface />} />  
                 <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
                 <Route path="/create-task" element={<CreateTask />} />
                 <Route path="/file-modules" element={<FileModules />} />
