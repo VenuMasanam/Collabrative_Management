@@ -71,7 +71,7 @@ const EmployeeInterface = () => {
     // Fetch tasks on component mount
     useEffect(() => {
         fetchEmployeeTasks();
-    }, [fetchEmployeeTasks]);
+    }, [fetchEmployee]);
 
     // 'Claim Task' button handler (dummy functionality for now)
     const handleClaimTask = (taskId) => {

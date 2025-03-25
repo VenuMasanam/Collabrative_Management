@@ -2,9 +2,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
 const Sidebar = () => {
     const navigate = useNavigate();
 
@@ -21,8 +18,8 @@ const Sidebar = () => {
 
     return (
         <aside className="employee-sidebar">
-            <div className="sidebar-header">
-                <h2>Team Lead Panel</h2>
+           <div className="sidebar-header">
+                <h2>TeamLead Panel</h2>
             </div>
             <nav className="sidebar-nav">
               {/* <button className="btn text-dark " >&gt;</button>  */}

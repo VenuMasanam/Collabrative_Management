@@ -81,8 +81,11 @@ const FileModules = () => {
 
   return (
     <div className="team-lead-interface">
-      <Sidebar />
       <main className="main-content">
+      <div>
+
+      <Sidebar />
+      </div>
         <h1>File Modules</h1>
         <p>Manage and review files and modules here.</p>
 
