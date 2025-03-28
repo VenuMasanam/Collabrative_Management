@@ -8,14 +8,10 @@ import Navbar from './Components/Navbar';
 import TeamLeadAuth from './Components/TeamLeadAuth';
 import EmployeeAuth from './Components/EmployeeAuth';
 import TeamLeadInterface from './Components/TeamLeadInterface';
-
 import EmployeeDashboard from './Components/EmployeeDashboard';
 import EmployeeInterface from './Components/EmployeeInterface';
 import CreateTask from './Components/CreateTask';
-
 import FileModules from './Components/FileModules';
-// import Deadlines from './Components/Deadlines';
-import Queries from './Components/Queries';
 import TaskModules from './Components/EmployeeInterface';
 
 const App = () => {
@@ -55,9 +51,6 @@ const App = () => {
                 <Route path="/create-task" element={<CreateTask />} />
                 <Route path="/file-modules" element={<FileModules />} />
                 <Route path="/task-modules/:moduleId" element={<TaskModules />} />
-                {/* <Route path="/deadlines" element={<Deadlines />} /> */}
-                <Route path="/queries" element={<Queries />} />
-                {/* Specific route for employee task by moduleId */}
             </Routes>
         </NavbarWrapper>
     );

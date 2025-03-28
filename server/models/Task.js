@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   taskFile: { type: String, required: true }, // store file path
-  accessKey: String,
+  //accessKey: String,
   moduleId: { type: String, required: true }, // Added moduleId field
   submissions: [{
     filePath: String,

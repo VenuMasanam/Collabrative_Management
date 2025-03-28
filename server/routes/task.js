@@ -62,7 +62,6 @@ const sendTaskEmail = async ({ taskName, assignEmail, startDate, endDate, taskFi
                 <p><strong>Module ID:</strong> ${moduleId}</p>  <!-- New Module ID field in email -->
                 <p><strong>Start Date:</strong> ${startDate}</p>
                 <p><strong>End Date:</strong> ${endDate}</p>
-                <p><strong>Access Key:</strong> ${accessKey}</p>
                 <p>You can download the task file <a href="${fileUrl}">here</a>.</p>
                 <p>Best regards,<br>Team Management System</p>
             </div>
