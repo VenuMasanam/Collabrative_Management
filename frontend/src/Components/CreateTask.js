@@ -8,7 +8,7 @@ import Sidebar from './Sidebar';
 const CreateTask = () => {
     const [teamLead, setTeamLead] = useState('');
     const [taskName, setTaskName] = useState('');
-    const [assignEmail, setAssignEmail] = useState('');
+    const [assignEmails, setAssignEmails] = useState([]); // Changed to an array
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [taskFile, setTaskFile] = useState(null);
@@ -19,11 +19,16 @@ const CreateTask = () => {
         setTaskFile(e.target.files[0]);
     };
 
+    const handleEmailsChange = (e) => {
+        const emailArray = e.target.value.split(',').map(email => email.trim());
+        setAssignEmails(emailArray);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('taskName', taskName);
-        formData.append('assignEmail', assignEmail);
+        formData.append('assignEmails', JSON.stringify(assignEmails)); // Serialize the array
         formData.append('startDate', startDate);
         formData.append('endDate', endDate);
         formData.append('moduleId', moduleId);
@@ -48,12 +53,11 @@ const CreateTask = () => {
 
     return (
         <div className="create-task-container">
-        <div>
-        <Sidebar />
-        </div>
+            <div>
+                <Sidebar />
+            </div>
             <h2>Create Task</h2>
             <form onSubmit={handleSubmit}>
-                
                 <input
                     type="text"
                     placeholder="Employee Task Name"
@@ -61,16 +65,13 @@ const CreateTask = () => {
                     onChange={(e) => setTaskName(e.target.value)}
                     required
                 />
-
-               
                 <input
-                    type="email"
-                    placeholder="Assign Email"
-                    value={assignEmail}
-                    onChange={(e) => setAssignEmail(e.target.value)}
+                    type="text"
+                    placeholder="Assign Emails (comma separated)"
+                    value={assignEmails.join(', ')}
+                    onChange={handleEmailsChange}
                     required
                 />
-
                 <input
                     type="text"
                     placeholder="Module ID"
@@ -78,7 +79,6 @@ const CreateTask = () => {
                     onChange={(e) => setModuleId(e.target.value)}
                     required
                 />
-
                 <label>Project Documents</label>
                 <input
                     type="file"
@@ -86,7 +86,6 @@ const CreateTask = () => {
                     onChange={handleFileChange}
                     required
                 />
-
                 <label>Start Date</label>
                 <input
                     type="date"
@@ -94,7 +93,6 @@ const CreateTask = () => {
                     onChange={(e) => setStartDate(e.target.value)}
                     required
                 />
-
                 <label>End Date</label>
                 <input
                     type="date"
@@ -102,13 +100,12 @@ const CreateTask = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                     required
                 />
-
-               <center>
-               <div className="button-group  ">
-                    <button type="button" className="back-btn m-4 bg-warning px-3" onClick={() => navigate(-1)}>cancel</button>
-                    <button type="submit" className="submit-btn px-2 mt-4 my-4">Create Task</button>
-                </div>
-               </center>
+                <center>
+                    <div className="button-group">
+                        <button type="button" className="back-btn m-4 bg-warning px-3" onClick={() => navigate(-1)}>Cancel</button>
+                        <button type="submit" className="submit-btn px-2 mt-4 my-4">Create Task</button>
+                    </div>
+                </center>
             </form>
         </div>
     );

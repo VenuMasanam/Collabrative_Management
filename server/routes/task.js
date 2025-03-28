@@ -1,4 +1,3 @@
-// routes/task.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -9,10 +8,7 @@ const Task = require('../models/Task');
 const upload = require('../middleware/uploads');
 const mime = require('mime-types');
 
-
-
 const router = express.Router();
-
 
 // Ensure the uploads folder exists
 const uploadDirectory = path.join(__dirname, '../uploads');
@@ -29,8 +25,6 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
-
-
 
 // Create transporter object using nodemailer for sending emails
 const transporter = nodemailer.createTransport({
@@ -84,19 +78,28 @@ const sendTaskEmail = async ({ taskName, assignEmail, startDate, endDate, taskFi
 
 // POST request to create a task
 router.post('/tasks', upload.single('taskFile'), async (req, res) => {
-    const { taskName, assignEmail, startDate, endDate, moduleId } = req.body;
+    const { taskName, assignEmails, startDate, endDate, moduleId } = req.body; // Changed to assignEmails
     const taskFile = req.file ? req.file.path : null;
     const accessKey = generateAccessKey();
 
     try {
         // Create a new Task document with moduleId included
-        const newTask = new Task({  taskName, assignEmail, startDate, endDate, taskFile, accessKey, moduleId });
+        const newTask = new Task({
+            taskName,
+            assignEmails: JSON.parse(assignEmails), // Parse the string to an array
+            startDate,
+            endDate,
+            taskFile,
+            moduleId
+        });
         await newTask.save();
 
-        // Send email with the task details including moduleId
-        sendTaskEmail({ taskName, assignEmail, startDate, endDate, taskFile, accessKey, moduleId, req });
+        // Send email to each email address in the assignEmails array
+        JSON.parse(assignEmails).forEach(assignEmail => {
+            sendTaskEmail({ taskName, assignEmail, startDate, endDate, taskFile, accessKey, moduleId, req });
+        });
 
-        res.status(201).json({ message: 'Task created and email is being sent', task: newTask });
+        res.status(201).json({ message: 'Task created and emails are being sent', task: newTask });
     } catch (err) {
         res.status(500).json({ error: 'Error creating task', details: err.message });
     }
@@ -119,13 +122,11 @@ router.get('/tasks', async (req, res) => {
     // Validate that email is provided
     if (!email) {
         return res.status(400).json({ message: 'Email is required' });
-        
     }
-    // console.log(email,"email ")
 
     try {
         // Find the task by assigned email (assignEmail)
-        const task = await Task.find({ assignEmail: email });
+        const task = await Task.find({ assignEmails: email }); // Updated to assignEmails array
 
         // If no task is found, return a 404 error
         if (!task) {
@@ -146,13 +147,11 @@ router.get('/task', async (req, res) => {
   // Validate that email is provided
   if (!email) {
       return res.status(400).json({ message: 'Email is required' });
-      
   }
-  // console.log(email,"email ")
 
   try {
       // Find the task by assigned email (assignEmail)
-      const task = await Task.find({ assignEmail: email });
+      const task = await Task.find({ assignEmails: email }); // Updated to assignEmails array
 
       // If no task is found, return a 404 error
       if (!task) {
@@ -166,7 +165,6 @@ router.get('/task', async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-
 
 // Route to fetch task details by moduleID
 router.get('/tasks/:moduleID', async (req, res) => {
@@ -188,114 +186,8 @@ router.get('/tasks/:moduleID', async (req, res) => {
   }
 });
 
-
-
-//   const { email } = req.params;
-
-//   try {
-//     // Find the task by moduleId
-//     const task = await Task.findOne({ assignEmail:email });
-
-//     if (!task) {
-//       return res.status(404).json({ message: 'Task not found' });
-//     }
-
-//     // Count the number of submissions
-//     const submissionCount = task.submissions.length;
-
-//     res.status(200).json({ count: submissionCount });
-//   } catch (error) {
-//     console.error('Error fetching submission count:', error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
-
-// router.post('/data', upload.single('file'), async (req, res) => {
-//   const { moduleId, dayIndex } = req.body;
-
-//   if (!req.file) {
-//     return res.status(400).send('No file uploaded');
-//   }
-
-//   try {
-//     const newData = new Data({
-//       moduleId,
-//       dayIndex,
-//       fileUrl: req.file.path // Save the file path
-//     });
-
-//     await newData.save();
-
-//     res.status(200).send('File uploaded and data saved successfully');
-//   } catch (error) {
-//     console.error('Error saving data:', error);
-//     res.status(500).send('Failed to save data');
-//   }
-// });
-
-
-// router.post('/data', upload.single('file'), async (req, res) => {
-//   const { moduleId, dayIndex, assignEmail } = req.body;
-
-//   if (!req.file) {
-//     return res.status(400).send('No file uploaded');
-//   }
-
-//   try {
-//     // Save submission to the data collection
-//     const newData = new Data({
-//       moduleId,
-//       assignEmail,
-//       dayIndex,
-//       fileUrl: req.file.path // Save the file path
-//     });
-
-//     await newData.save();
-
-//     // Update the task with the new submission
-//     const task = await Task.findOne({ moduleId, assignEmail });
-//     if (task) {
-//       task.submissions.push({
-//         filePath: req.file.path,
-//         assignedEmail: assignEmail,
-//         day: `Day-${dayIndex}`,
-//       });
-//       await task.save();
-//     }
-
-//     res.status(200).send('File uploaded and data saved successfully');
-//   } catch (error) {
-//     console.error('Error saving data:', error);
-//     res.status(500).send('Failed to save data');
-//   }
-// });
-
 // POST endpoint for submitting a task
-
-// Get task by moduleId
-router.get('/task-modules/:moduleId', async (req, res) => {
-  try {
-      const { moduleId } = req.params;
-
-      // Find the task by moduleId
-      const task = await Task.findOne({ moduleId });
-
-      if (!task) {
-          return res.status(404).json({ message: 'Task not found' });
-      }
-      
-      res.json(task);
-  } catch (error) {
-      console.error('Error fetching task:', error);
-      res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
 router.post('/submit-task', upload.single('file'), async (req, res) => {
-  // console.log('Received data:', req.body);
-  // console.log('Received file:', req.file);
-
   try {
     // Extract data from the request body
     const { moduleId, assignEmail, dayIndex } = req.body;
@@ -323,23 +215,14 @@ router.post('/submit-task', upload.single('file'), async (req, res) => {
       assignedEmail: assignEmail,
       day: dayIndex.toString(), // Convert to string if necessary
     };
-    
-    // await Task.updateOne(
-    //   { 'submission.assignEmail': assignEmail},
-    //   { $push: { submissions: submission } }
-    // );
-  const task = await Task.findOne({ moduleId, assignEmail });
-  const submissionsCount = task.submissions.length;
-  // console.log('Matched Task:', task);
-  const result = await Task.updateOne({ moduleId, assignEmail }, { $push: { submissions: submission } });
-if (result.matchedCount === 0) {
-  console.error('No matching document found');
-}
-// await Task.updateOne(
-//   { moduleId, assignEmail }, // Query matches document with these fields
-//   { $push: { submissions: submission } } // Pushes the new submission to the array
-// );
 
+    const task = await Task.findOne({ moduleId, assignEmail });
+    const submissionsCount = task.submissions.length;
+
+    const result = await Task.updateOne({ moduleId, assignEmail }, { $push: { submissions: submission } });
+    if (result.matchedCount === 0) {
+      console.error('No matching document found');
+    }
 
     // Step 3: Respond with success message
     return res.status(200).json({ message: 'Task submitted successfully' });
@@ -352,7 +235,6 @@ if (result.matchedCount === 0) {
 router.get('/data/:moduleId/count', async (req, res) => {
   try {
     const { moduleId } = req.params;
-    // console.log(moduleId)
 
     // Validate input
     if (!moduleId) {
@@ -368,7 +250,6 @@ router.get('/data/:moduleId/count', async (req, res) => {
 
     // Get the count of submissions
     const submissionsCount = task.submissions.length;
-    // console.log(submissionsCount)
 
     // Respond with the count
     res.status(200).json({ count: submissionsCount });
@@ -455,9 +336,6 @@ router.get('/download-file/:moduleId/:dayIndex', async (req, res) => {
     // Construct the absolute file path
     const filePath = path.join(__dirname, '..', 'uploads', path.basename(file.fileUrl));
 
-
-    // console.log(`File path resolved: ${filePath}`);
-
     // Check if the file actually exists
     if (!fs.existsSync(filePath)) {
       console.error('File not found on server:', filePath);
@@ -484,8 +362,5 @@ router.get('/download-file/:moduleId/:dayIndex', async (req, res) => {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
-
-
-
 
 module.exports = router;
